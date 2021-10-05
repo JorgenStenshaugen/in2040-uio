@@ -102,3 +102,17 @@ list benyttet i stedet for quote, som er en del av definisjonen av prosedyren ba
 |#
 
 " ---Oppgave 2a--- "  
+(define (decode-h bits tree)
+  (define (decode-1 bits current-branch result)
+    (if (null? bits)
+        (reverse result)
+        (let ((next-branch
+               (choose-branch (car bits) current-branch)))
+          (if (leaf? next-branch)
+              (decode-1 (cdr bits) tree (cons (symbol-leaf next-branch) result) )
+              (decode-1 (cdr bits) next-branch result)))))
+  (decode-1 bits tree '()))
+
+
+"Oppgave 2b)"
+(decode-h sample-code sample-tree)
