@@ -118,3 +118,26 @@ list benyttet i stedet for quote, som er en del av definisjonen av prosedyren ba
 
 "Oppgave 2b)"
 (decode-h sample-code sample-tree)
+
+"Oppgave 2c)"
+(define (encode message tree)
+  (if (null? message)
+      '()
+      (append (encode-symbol (car message) tree)
+              (encode (cdr message) tree))))
+
+
+(define (encode code tree)
+  (define (encode-1 code current-branch result)
+    (if (null? code)
+        (reverse result)
+        (if (leaf? current-branch)
+            (if (eq? (car code) (car (symbols current-branch)))
+                (encode-1 (cdr code) tree result)
+                (list))
+            
+            (append (encode-1 code (left-branch current-branch) (cons 0 result))
+                    (encode-1 code (right-branch current-branch) (cons 1 result))))))
+  (encode-1 code tree '()))
+
+(decode (encode '(ninjas fight ninjas) sample-tree) sample-tree)
