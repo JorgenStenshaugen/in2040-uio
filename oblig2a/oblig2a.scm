@@ -101,7 +101,7 @@ Dette var ikke tilfellet da vi gjorde kallet med bar, fordi da ble datastrukture
 list benyttet i stedet for quote, som er en del av definisjonen av prosedyren bah.
 |#
 
-" ---Oppgave 2a--- "
+;; " --- Oppgave 2a --- "
 
 (load "huffman.scm")
 
@@ -116,10 +116,10 @@ list benyttet i stedet for quote, som er en del av definisjonen av prosedyren ba
               (decode-1 (cdr bits) next-branch result)))))
   (decode-1 bits tree '()))
 
-"Oppgave 2b)"
+" --- Oppgave 2b --- "
 (decode-h sample-code sample-tree)
 
-"Oppgave 2c)"
+" --- Oppgave 2c --- "
 (define (encode message tree)
   (if (null? message)
       '()
@@ -141,3 +141,34 @@ list benyttet i stedet for quote, som er en del av definisjonen av prosedyren ba
   (encode-1 code tree '()))
 
 (decode (encode '(ninjas fight ninjas) sample-tree) sample-tree)
+
+" --- Oppgave 2d --- "
+(define (grow-huffman-tree items)
+  (define (grow-huffman-tree-1 leaf)
+    (if (null? (cdr leaf))
+        (car leaf)
+        (let* ((left (car leaf))
+              (right (cadr leaf))
+              (branch (make-code-tree left right)))
+          (grow-huffman-tree-1 (adjoin-set branch (cddr leaf))))))
+  (grow-huffman-tree-1 (make-leaf-set items)))
+
+(define freqs '((a 2) (b 5) (c 1) (d 3) (e 1) (f 3)))
+(define codebook (grow-huffman-tree freqs))
+(decode (encode '(a b c) codebook) codebook)
+
+;; --- Oppgave 2e --- 
+
+;; - Svar: Det blir brukt 43 bits på å kode meldingen.
+;; - Svar: Den gjennomsnittlige lengden på hvert kodeord som brukes er 2.8.
+;; - Svar: Vi starter med å telle hvor mange symboler vi har, som i vårt tilfelle er 16. Deretter tar vi 2^x frem til vi kommer til et svar som tilsvarer minst 16.
+;;   Svaret på det minste antall bits man ville trengt er altså x, som blir 4 for oss siden 2^4 = 16.
+
+" --- Oppgave 2f --- "
+(define (huffman-leaves tree)
+  (if (leaf? tree)
+      (cons (list (symbol-leaf tree) (weight-leaf tree)) '())
+      (append (huffman-leaves (left-branch tree))
+              (huffman-leaves (right-branch tree)))))
+
+(huffman-leaves sample-tree)
