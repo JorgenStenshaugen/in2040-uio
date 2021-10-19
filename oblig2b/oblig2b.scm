@@ -1,6 +1,6 @@
 ; IN2040 Obligatorisk innlevering 2b av Jørgen Stenshaugen og Yahya Isam
 
-;; --- Oppgave 1a ---
+" --- Oppgave 1a --- "
 (define make-counter
   (lambda ()
   (let ((count 0))
@@ -11,6 +11,13 @@
 (define count 42)
 (define c1 (make-counter))
 (define c2 (make-counter))
+
+;; Tests:
+(c1)
+(c1)
+(c1)
+count
+(c2)
 
 ;; --- Oppgave 1b --- ** TEGNING **
 
@@ -49,10 +56,17 @@
 " --- Oppgave 2b --- "
 
 (define (pop! stack)
-  stack)
+  (if (eq? stack make-stack) 
+  stack))
 
 (define (stack stack)
   stack)
 
-(define (push! stack)
+(define (push! stack . args)
   stack)
+
+;; Tests:
+(pop! s1)
+(stack s1)
+(push! s1 'foo 'faa)
+(stack s1)
