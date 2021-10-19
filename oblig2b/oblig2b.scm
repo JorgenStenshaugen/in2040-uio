@@ -13,3 +13,46 @@
 (define c2 (make-counter))
 
 ;; --- Oppgave 1b --- ** TEGNING **
+
+" --- Oppgave 2a --- "
+(define (make-stack items)
+  (define (func name . args)
+    (cond ((equal? name 'pop!) (pop!))
+          ((equal? name 'stack) (stack))
+          ((equal? name 'push!) (push! args))))
+
+  (define (pop!)
+    (if (not (null? items)) (set! items (cdr items))))
+
+  
+  (define (stack)
+    items)
+
+  (define (push! new-items)
+    (set! items (append (reverse new-items) items)))
+ 
+  func)
+
+;; Tests:
+(define s1 (make-stack (list 'foo 'bar)))
+(define s2 (make-stack '()))
+
+(s1 'pop!)
+(s1 'stack)
+(s2 'pop!)
+(s2 'push! 1 2 3 4)
+(s2 'stack)
+(s1 'push! 'bah)
+(s1 'push! 'zap 'zip 'baz)
+(s1 'stack)
+
+" --- Oppgave 2b --- "
+
+(define (pop! stack)
+  stack)
+
+(define (stack stack)
+  stack)
+
+(define (push! stack)
+  stack)
