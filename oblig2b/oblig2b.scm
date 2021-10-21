@@ -56,17 +56,59 @@ count
 " --- Oppgave 2b --- "
 
 (define (pop! stack)
-  (if (eq? stack make-stack) 
-  stack))
+  (stack 'pop!))
 
 (define (stack stack)
-  stack)
+  (stack 'stack))
 
 (define (push! stack . args)
-  stack)
+  (apply stack 'push! args))
 
 ;; Tests:
 (pop! s1)
 (stack s1)
 (push! s1 'foo 'faa)
 (stack s1)
+
+" --- Oppgave 3a --- "
+
+(define bar (list 'a 'b 'c 'd 'e))
+(set-cdr! (cdddr bar) (cdr bar))
+bar
+(list-ref bar 0)
+(list-ref bar 1)
+(list-ref bar 2)
+(list-ref bar 7)
+
+;; a) I set-cdr! setter vi at d skal referere til (cdr bar) som skaper en uendelig løkke med indekser som vi kan referere til når vi gjør et kall på list-ref.
+
+
+" --- Oppgave 3b --- "
+(define bah (list 'bring 'a 'towel))
+(set-car! bah (cdr bah))
+bah
+(set-car! (car bah) 42)
+bah
+(list-ref bah 0)
+
+;; b) set-car! bytter ut verdien av (car (car bah)) til å peke mot verdien 42, som resulterer i ((42 towel) 42 towel).
+" --- Oppgave 3c --- "
+
+
+(define (cycle? items)
+  (define (cycle-iter left right)
+    (cond
+      ((or (null? right) (null? (cdr right))) #f)
+      ((eq? left right) #t)
+      (else (cycle-iter (cdr left) (cddr right)))))
+
+  (if (null? items)
+      #f
+      (cycle-iter items (cdr items))))
+
+;; Tests: 
+(cycle? '(hey ho))
+(cycle? '(la la la))
+(cycle? bah)
+(cycle? bar)
+
