@@ -1,5 +1,8 @@
 ; IN2040 Obligatorisk innlevering 2b av Jørgen Stenshaugen og Yahya Isam
 
+;; Prosedyren make-counter returnerer en ny prosedyre som benytter innkapsling slik at den kan
+;; holde styr på hvor mange ganger den blir kalt på. Her er 'count' en privat variabel som starter
+;; med å bli initialisert til 0 og inkrementeres destruktivt med 1 ved bruk av set!, hver gang den blir kalt på.
 " --- Oppgave 1a --- "
 (define make-counter
   (lambda ()
@@ -21,6 +24,10 @@ count
 
 ;; --- Oppgave 1b --- ** TEGNING **
 
+;; Prosedyren make-stack tar 'items' som parameter som skal returnere en stack.
+;; make-stack har 3 beskjeder: 'push!, 'pop! og 'stack.
+;; Beskjeden 'pop! destruktivt fjerner det øverste elementet i stacken.
+;; Altså det elementet som er på toppen av stacken.
 " --- Oppgave 2a --- "
 (define (make-stack items)
   (define (func name . args)
@@ -53,6 +60,8 @@ count
 (s1 'push! 'zap 'zip 'baz)
 (s1 'stack)
 
+;; Her gjør prosedyrene det samme som beskjedene i 2a,
+;; bare at vi har abstrahert og definert et mer intuitivt grensesnitt.
 " --- Oppgave 2b --- "
 
 (define (pop! stack)
@@ -90,11 +99,12 @@ bah
 (set-car! (car bah) 42)
 bah
 (list-ref bah 0)
+;; set-car! bytter ut verdien av (car (car bah)) til å peke mot verdien 42, som resulterer i ((42 towel) 42 towel).
 
-;; b) set-car! bytter ut verdien av (car (car bah)) til å peke mot verdien 42, som resulterer i ((42 towel) 42 towel).
+
+;; Predikatet 'cycle?' sjekker om en listestruktur er syklisk eller ikke.
+;; Dersom listestrukturen er syklisk, vil #t returneres, ellers #f.
 " --- Oppgave 3c --- "
-
-
 (define (cycle? items)
   (define (cycle-iter left right)
     (cond
@@ -112,3 +122,7 @@ bah
 (cycle? bah)
 (cycle? bar)
 
+;; --- Oppgave 3d ---
+;; Sirkulære lister er ikke ekte lister på grunn av at representasjonen av en liste i Scheme er
+;; sammensatte cons-par som alltid vil ende med en tom liste. Når det gjelder representasjonen
+;; av sirkulære lister, vil de aldri ende med en tom liste.
