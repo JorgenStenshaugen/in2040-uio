@@ -6,7 +6,7 @@
 " --- Oppgave 1a --- "
 (define make-counter
   (lambda ()
-  (let ((count 0))
+  (let ((count 0)) 
     (lambda ()
     (set! count (+ count 1))
     count))))
@@ -26,22 +26,25 @@ count
 
 ;; Prosedyren make-stack tar 'items' som parameter som skal returnere en stack.
 ;; make-stack har 3 beskjeder: 'push!, 'pop! og 'stack.
-;; Beskjeden 'pop! destruktivt fjerner det øverste elementet i stacken.
-;; Altså det elementet som er på toppen av stacken.
+
+
+
 " --- Oppgave 2a --- "
 (define (make-stack items)
+  ;; Message passing for å kalle de ulike funksjonene basert på kallene.
   (define (func name . args)
-    (cond ((equal? name 'pop!) (pop!))
-          ((equal? name 'stack) (stack))
-          ((equal? name 'push!) (push! args))))
+    (cond ((equal? name 'pop!) (pop!)) ;; Dersom man kaller på pop!
+          ((equal? name 'stack) (stack)) ;; Dersom man kaller på stack
+          ((equal? name 'push!) (push! args)))) ;; Dersom man kaller på push med argumenter.
 
+  ;; Beskjeden 'pop! destruktivt fjerner det øverste (altså elementet som er på toppen av stacken) elementet i stacken.
   (define (pop!)
     (if (not (null? items)) (set! items (cdr items))))
 
-  
+  ;; Beskjeden 'stack returnerer listen av alle elementer som er i stacken.
   (define (stack)
     items)
-
+  ;; Beskjeden 'push! legger elementer destruktivt i stacken.
   (define (push! new-items)
     (set! items (append (reverse new-items) items)))
  
@@ -60,17 +63,17 @@ count
 (s1 'push! 'zap 'zip 'baz)
 (s1 'stack)
 
+
+" --- Oppgave 2b --- "
 ;; Her gjør prosedyrene det samme som beskjedene i 2a,
 ;; bare at vi har abstrahert og definert et mer intuitivt grensesnitt.
-" --- Oppgave 2b --- "
-
 (define (pop! stack)
-  (stack 'pop!))
+  (stack 'pop!)) ;; Kaller på stack'ens prosedyre for pop!
 
 (define (stack stack)
-  (stack 'stack))
+  (stack 'stack)) ;; Kaller på stack'ens prosedyre for stack
 
-(define (push! stack . args)
+(define (push! stack . args) ;; Kaller på stack'ens prosedyre for push! og applyer argumentene på prosedyren
   (apply stack 'push! args))
 
 ;; Tests:
@@ -106,12 +109,14 @@ bah
 ;; Dersom listestrukturen er syklisk, vil #t returneres, ellers #f.
 " --- Oppgave 3c --- "
 (define (cycle? items)
-  (define (cycle-iter left right)
+  (define (cycle-iter left right) ;; Hjelpe prosedyre
     (cond
-      ((or (null? right) (null? (cdr right))) #f)
-      ((eq? left right) #t)
-      (else (cycle-iter (cdr left) (cddr right)))))
+      ((or (null? right) (null? (cdr right))) #f) ;; Dersom høyre listen eller cdr av høyre listen er tom, så er den ikke syklisk.
+      ((eq? left right) #t) ;; Dersom venstre og høyre listen er like så er den syklisk.
+      (else (cycle-iter (cdr left) (cddr right))))) ;; Kjør rekursjon hvor vi fjerner det første elementet på venstre listen, og 2 på høyre.
 
+  ;; Liten sjekk om listen er tom eller ikke. Om den ikke er tom så kjører vi rekursjonen vår.
+  ;; Vi starter med at høyre listen er en mindre enn venstre.
   (if (null? items)
       #f
       (cycle-iter items (cdr items))))
