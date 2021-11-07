@@ -1,3 +1,5 @@
+; IN2040 Obligatorisk innlevering 2b av Jørgen Stenshaugen og Yahya Isam
+
 (load "prekode3a.scm")
 
 ;; --- Oppgave 1 ---
