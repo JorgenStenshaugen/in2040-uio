@@ -47,6 +47,7 @@
 (test-proc 40 41 42 43 44)
 (test-proc 42 43 44)
 
+(newline)
 " --- Oppgave 1c tests --- "
 (define mem-fib (mem 'memoize fib))
 
@@ -80,9 +81,6 @@ I den memoiserte versjonen som settes med set! så kaller den alltid på den nye
 (stream-to-list (stream-interval 10 20))
 (show-stream nats 15)
 (stream-to-list nats 10)
-(newline)
-(stream-car (integers-starting-from 10))
-
 
 ;; --- Oppgave 2b ---
 (define (stream-take n stream)
