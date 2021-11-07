@@ -3,7 +3,7 @@
 (load "prekode3a.scm")
 
 ;; --- Oppgave 1 ---
-(define procs (make-table))
+(define procs (make-table)) ;; Oversikt over alle prosedyrene før de ble memoized
 (define (mem name proc)
   ;; Message passing for å kalle på de ulike funksjonene basert på prosedyrene.
   (define (func name proc)
@@ -12,15 +12,15 @@
   
   ;; --- Oppgave 1a ---
   (define (memoize proc)
-    (let ((table (make-table)))
+    (let ((table (make-table))) ;; Lager en table for verdier
       (let ((memoized 
              (lambda args
-               (or (lookup args table)
-                   (let ((value (apply proc args)))
-                     (insert! args value table)
-                     value)))))
-      (insert! memoized proc procs)
-      memoized)))
+               (or (lookup args table) ;; Leter etter verdiene
+                   (let ((value (apply proc args))) 
+                     (insert! args value table) ;; Legger inn verdien i table.
+                     value))))) ;; Returnerer verdien
+      (insert! memoized proc procs) ;; Legger inn original prosedyren i egen table
+      memoized))) ;; Returnerer memoized prosedyre.
 
   ;; --- Oppgave 1b ---
   (define (unmemoize proc)
@@ -65,17 +65,17 @@ I den memoiserte versjonen som settes med set! så kaller den alltid på den nye
 ;; --- Oppgave 2a ---
 (define (list-to-stream liste)
   (if (null? liste)
-      the-empty-stream
-      (cons-stream (car liste) (list-to-stream (cdr liste)))))
+      the-empty-stream ;; Returnerer tom stream om listen er tom.
+      (cons-stream (car liste) (list-to-stream (cdr liste))))) ;; Bygger streamen ved å ta fra listen.
 
 (define (stream-to-list stream . args)
   (if (stream-null? stream)
-      '()
-      (cond ((null? args)
-            (cons (stream-car stream) (stream-to-list (stream-cdr stream))))
-            ((= (car args) 0) '())
+      '() ;; returnerer tom liste om streamen er tom
+      (cond ((null? args) 
+            (cons (stream-car stream) (stream-to-list (stream-cdr stream)))) ;; Om argumentene ikke er oppgitt
+            ((= (car args) 0) '()) ;; Om man spør etter 0 elementer
             (else (cons (stream-car stream)
-                        (stream-to-list (stream-cdr stream) (- (car args) 1)))))))
+                        (stream-to-list (stream-cdr stream) (- (car args) 1))))))) ;; Bygger opp streamen rekursivt.
 
 (newline)
 " --- Oppgave 2a tests --- "
@@ -87,9 +87,9 @@ I den memoiserte versjonen som settes med set! så kaller den alltid på den nye
 ;; --- Oppgave 2b ---
 (define (stream-take n stream)
   (if (or (stream-null? stream) (= n 0))
-      the-empty-stream
+      the-empty-stream ;; Returner den en tom strøm om streamen er tom eller at n er lik 0.
       (cons-stream (stream-car stream)
-            (stream-take (- n 1) (stream-cdr stream)))))
+            (stream-take (- n 1) (stream-cdr stream))))) ;; Bygger opp stream med n.
 
 (newline)
 " --- Oppgave 2b tests --- "
@@ -106,11 +106,11 @@ foo
 ;; --- Oppgave 2d ---
 (define (remove-duplicates stream)
   (if (stream-null? stream)
-      the-empty-stream
+      the-empty-stream ;; Om streamen er null
       (cons-stream (stream-car stream)
                    (remove-duplicates 
                     (stream-filter
-                     (lambda (value) (not (equal? (stream-car stream) value)))
+                     (lambda (value) (not (equal? (stream-car stream) value))) ;; Sammenligner med første verdi.
                      (stream-cdr stream))))))
 
 (newline)
