@@ -68,7 +68,10 @@
                          env))
         ((begin? exp) 
          (eval-sequence (begin-actions exp) env))
-        ((cond? exp) (mc-eval (cond->if exp) env))))
+        ((cond? exp) (mc-eval (cond->if exp) env))
+        ((and? exp) (eval-and exp env)) ;; Lagt til for oppgave 3a
+        ;;((or? exp) (eval-or exp env))
+        )) ;; Lagt til for oppgave 3a
 
 (define (special-form? exp)
   (cond ((quoted? exp) #t)
@@ -78,6 +81,8 @@
         ((lambda? exp) #t)
         ((begin? exp) #t)
         ((cond? exp) #t)
+        ((and? exp) #t) ;; Lagt til en ny special-form 'and?' (oppgave 3a)
+        ;;((or? exp) #t) ;; Lagt til en ny special-form 'or?' (oppgave 3a)
         (else #f)))
 
 (define (list-of-values exps env)
@@ -107,6 +112,21 @@
                     (mc-eval (definition-value exp) env)
                     env)
   'ok)
+
+;; Lagt til for oppgave 3a
+#|
+(define (eval-and exp env)
+  (cond ((false? (mc-eval (car exp) env)) #f)
+        ((last-exp? (mc-eval (car exp) env)) env)
+        (else (eval-and (cdr exp) env))))
+|#
+
+(define (eval-and exp env)
+    (cond ((false? (mc-eval (car (cdr exp)) env)) #f)
+        ((last-exp? (mc-eval (cdr (cdr exp)) env)) "pakkis")
+        (else (eval-and (cons (car exp) (cdr (cdr exp))) env))))
+
+
 
 ;;; Predikater + selektorer som definerer syntaksen til uttrykk i språket 
 ;;; (seksjon 4.1.2, SICP)
@@ -230,6 +250,9 @@
                      (sequence->exp (cond-actions first))
                      (expand-clauses rest))))))
 
+;; Lagt til for oppgave 3a
+(define (and? exp) (tagged-list? exp 'and))
+(define (or? exp) (tagged-list? exp 'or))
 
 ;;; Evaluatorens interne datastrukturer for å representere omgivelser,
 ;;; prosedyrer, osv (seksjon 4.1.3, SICP):
@@ -369,7 +392,8 @@
               (lambda (x) (display x) 'ok))
         (list 'newline 
               (lambda () (newline) 'ok))
-;;      her kan vi legge til flere primitiver.
+        ;;(list '1+ (lambda (x) (+ x 1))) ;; Lagt til en ny primitiv prosedyre som adderer med 1 (oppgave 2a)
+        ;;(list '1- (lambda (x) (- x 1))) ;; Lagt til en ny primitiv prosedyre som subtraherer med 1 (oppgave 2a)
         ))
 
 (define (primitive-procedure-names)
