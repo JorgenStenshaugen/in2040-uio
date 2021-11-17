@@ -120,11 +120,10 @@
         ((last-exp? (mc-eval (car exp) env)) env)
         (else (eval-and (cdr exp) env))))
 |#
-
 (define (eval-and exp env)
-    (cond ((false? (mc-eval (car (cdr exp)) env)) #f)
-        ((last-exp? (mc-eval (cdr (cdr exp)) env)) "pakkis")
-        (else (eval-and (cons (car exp) (cdr (cdr exp))) env))))
+    (cond ((false? (mc-eval (first-exp (cdr exp)) env)) #f)
+          ((last-exp? (cdr exp)) (mc-eval (first-exp (cdr exp)) env))
+          (else (eval-and (cons (first-exp exp) (rest-exps (cdr exp))) env))))
 
 
 
