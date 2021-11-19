@@ -70,8 +70,8 @@
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (mc-eval (cond->if exp) env))
         ((and? exp) (eval-and exp env)) ;; Lagt til for oppgave 3a
-        ;;((or? exp) (eval-or exp env))
-        )) ;; Lagt til for oppgave 3a
+        ((or? exp) (eval-or exp env)) ;; Lagt til for oppgave 3a
+        ((let? exp) (mc-eval (let->lambda exp) env)))) ;; Lagt til for oppgave 3c
 
 (define (special-form? exp)
   (cond ((quoted? exp) #t)
@@ -82,7 +82,8 @@
         ((begin? exp) #t)
         ((cond? exp) #t)
         ((and? exp) #t) ;; Lagt til en ny special-form 'and?' (oppgave 3a)
-        ;;((or? exp) #t) ;; Lagt til en ny special-form 'or?' (oppgave 3a)
+        ((or? exp) #t) ;; Lagt til en ny special-form 'or?' (oppgave 3a)
+        ((let? exp) #t) ;; Lagt til en ny special-form 'let?' (oppgave 3c)
         (else #f)))
 
 (define (list-of-values exps env)
@@ -91,10 +92,21 @@
       (cons (mc-eval (first-operand exps) env)
             (list-of-values (rest-operands exps) env))))
 
+;; Oppgave 3b
+(define (else? exp) (tagged-list? exp 'else))
+
 (define (eval-if exp env)
-  (if (true? (mc-eval (if-predicate exp) env))
-      (mc-eval (if-consequent exp) env)
-      (mc-eval (if-alternative exp) env)))
+  (cond ((else? exp) (mc-eval (if-predicate exp) env))
+        ((true? (mc-eval (if-predicate exp) env)) (mc-eval (if-alternative exp) env))
+        (else (eval-if (cddddr exp) env))))
+
+;; Oppgave 3c
+(define (let->lambda exp)
+  (let ((param (cadr exp))
+        (body (caddr exp)))
+    (make-lambda param body)))
+
+
 
 (define (eval-sequence exps env)
   (cond ((last-exp? exps) (mc-eval (first-exp exps) env))
@@ -114,18 +126,17 @@
   'ok)
 
 ;; Lagt til for oppgave 3a
-#|
 (define (eval-and exp env)
-  (cond ((false? (mc-eval (car exp) env)) #f)
-        ((last-exp? (mc-eval (car exp) env)) env)
-        (else (eval-and (cdr exp) env))))
-|#
+    (cond ((null? (cdr exp)) #t)
+          ((false? (mc-eval (first-exp (cdr exp)) env)) #f)
+          ((last-exp? (cdr exp)) (mc-eval (first-exp (cdr exp)) env))
+          (else (eval-and (cons (first-exp exp) (rest-exps (cdr exp))) env))))
 
-(define (eval-and exp env)
-    (cond ((false? (mc-eval (car (cdr exp)) env)) #f)
-        ((last-exp? (mc-eval (cdr (cdr exp)) env)) "pakkis")
-        (else (eval-and (cons (car exp) (cdr (cdr exp))) env))))
-
+;; Lagt til for oppgave 3a
+(define (eval-or exp env)
+  (cond ((null? (cdr exp)) #f)
+        ((true? (mc-eval (cadr exp) env)) (mc-eval (cadr exp) env))
+        (else (eval-or (cons (first-exp exp) (rest-exps (cdr exp))) env))))
 
 
 ;;; Predikater + selektorer som definerer syntaksen til uttrykk i språket 
@@ -181,6 +192,8 @@
 (define (make-lambda parameters body)
   (cons 'lambda (cons parameters body)))
 
+
+(define (let? exp) (tagged-list? exp 'let))
 
 (define (if? exp) (tagged-list? exp 'if))
 
