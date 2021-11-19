@@ -127,7 +127,7 @@
 
 ;; Lagt til for oppgave 3a
 (define (eval-and exp env)
-    (cond ((null? (cdr exp)) #t)
+    (cond ((null? (rest-exps exp)) #t)
           ((false? (mc-eval (first-exp (cdr exp)) env)) #f)
           ((last-exp? (cdr exp)) (mc-eval (first-exp (cdr exp)) env))
           (else (eval-and (cons (first-exp exp) (rest-exps (cdr exp))) env))))
